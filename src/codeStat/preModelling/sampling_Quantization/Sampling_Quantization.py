@@ -8,7 +8,7 @@ import matplotlib
 matplotlib.use("Agg")          # non-GUI backend
 
 sampled_root = '../data/sampled'
-sampled2_root = '../data/sampled2'
+sampled_small_root = '../data/sampled_small'
 
 def sampling(wav_path: str) -> tuple[np.ndarray, int]:
     samples, sr = sf.read(wav_path, dtype="float64")
