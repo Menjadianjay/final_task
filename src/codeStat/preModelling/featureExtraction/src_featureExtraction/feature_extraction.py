@@ -1,22 +1,6 @@
 import numpy as np
-import soundfile as sf
-import matplotlib.pyplot as plt
-import matplotlib.gridspec as gridspec
-from pathlib import Path
-import glob
-import pandas as pd
-# import nbimport
-# import importlib
-import codeStat.preModelling.sampling_Quantization.src_Sampling_Quantization.Sampling_Quantization as Sampling_Quantization
-from codeStat.preModelling.sampling_Quantization.src_Sampling_Quantization.Sampling_Quantization import *
-import codeStat.preModelling.voiceActivityDetection.src_VoiceActivityDetection.voiceActivityDetection as VAD
-from codeStat.preModelling.voiceActivityDetection.src_VoiceActivityDetection.voiceActivityDetection import *
-# import Filecsv_pdf.src_csv.saveDir as saveCsv
-# from  Filecsv_pdf.src_csv.saveDir import *
-
-sampled_root = '../data/sampled'
-sampled_small_root = '../data/sampled_small'
-
+import codeStat.modelimports.modelFunction as func
+from codeStat.modelimports.modelFunction import *
 
 # ─────────────────────────────────────────────
 #  Step 1 : Pre-Emphasis
