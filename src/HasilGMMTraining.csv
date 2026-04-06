@@ -1,0 +1,2 @@
+Label,Jumlah Bingkai,Dimensi Fitur,K Komponen,Iterasi EM,Konvergen,Log-Likelihood Akhir,Bobot w_k
+,972792,39,16,100,False,-132.550833,"[0.0732, 0.0455, 0.0625, 0.0926, 0.0889, 0.0733, 0.0494, 0.0716, 0.0766, 0.062, 0.0616, 0.0545, 0.0414, 0.0794, 0.023, 0.0445]"
