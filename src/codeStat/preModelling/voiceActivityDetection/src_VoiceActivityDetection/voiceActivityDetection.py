@@ -4,8 +4,6 @@ import pandas as pd
 import matplotlib
 matplotlib.use("Agg")          # non-GUI backend
 
-sampled_root = '../data/sampled'
-sampled_small_root = '../data/sampled_small'
 
 
 def voice_activity_detection(
