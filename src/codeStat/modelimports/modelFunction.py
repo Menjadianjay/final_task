@@ -7,8 +7,8 @@ sampled_root = 'D:/doc/2026/FINAL_CODE/data/sampled'
 sampled_small_root = 'D:/doc/2026/FINAL_CODE/data/sampled_small'
 
 #convertFile
-import src.Filecsv_pdf.src_convertingFile.converting_file as cnv
-from src.Filecsv_pdf.src_convertingFile.converting_file import *
+import Filecsv_pdf.src_convertingFile.converting_file as cnv
+from Filecsv_pdf.src_convertingFile.converting_file import *
 #Sampling_ Quantization
 import codeStat.preModelling.sampling_Quantization.src_Sampling_Quantization.Sampling_Quantization as Sampling_Quantization
 from codeStat.preModelling.sampling_Quantization.src_Sampling_Quantization.Sampling_Quantization import *
