@@ -1,26 +1,6 @@
-"""
-gmm_pipeline.py
-===============
-Pipeline utama GMM ASR Bahasa Jawa — versi EFISIEN.
-
-Perbaikan utama dibanding versi sebelumnya:
-  ✓ MFCC di-cache sekali → tidak di-extract ulang 3× (hemat ~70% waktu)
-  ✓ Frame per kata dikumpulkan dari cache → tidak loop file ulang
-  ✓ Hyperparameter tuning hanya re-train GMM & re-decode (bukan re-extract)
-  ✓ Scoring GMM hanya untuk kata-kata kandidat (bukan semua vocab)
-  ✓ Parallelisme opsional untuk tuning menggunakan ProcessPoolExecutor
-  ✓ N-gram rescore tidak menyertakan referensi sebagai kandidat (metodologis benar)
-
-Alur pipeline:
-  [1] Load transkrip CSV
-  [2] Extract MFCC semua audio → simpan di dict cache (sekali saja!)
-  [3] Kumpulkan frame per kata dari cache (tidak baca file lagi)
-  [4] Latih GMM per kata
-  [5] Latih N-Gram dari seluruh transkrip
-  [6] Dekode semua audio → WER
-  [7] Hyperparameter tuning (re-train GMM + re-decode saja)
-  [8] Simpan semua hasil CSV
-"""
+import sys
+import os
+sys.path.insert(0, r"D:\doc\2026\FINAL_CODE\src")
 
 import os
 import glob
@@ -31,23 +11,12 @@ from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from typing import Dict, List, Tuple, Optional
 
-# Import modul lokal
 import codeStat.modelimports.modelFunction as func
 from codeStat.modelimports.modelFunction import *
-
-
-# ══════════════════════════════════════════════════════════════════════════════
-# BAGIAN 1 — LOAD DATA
-# ══════════════════════════════════════════════════════════════════════════════
+import codeStat.modelling.languageModelling.srcLanguageModelling.lexicon_ngram as lexicon_ngram
+from codeStat.modelling.languageModelling.srcLanguageModelling.lexicon_ngram import *
 
 def baca_transkrip_csv(csv_path: str) -> Dict[str, str]:
-    """
-    Baca CSV hasil sampling stratified.
-    Kolom: Path_Data, sentences
-
-    Returns:
-        {audio_id: kalimat_lowercase}
-    """
     df = pd.read_csv(csv_path)
     result = {}
     for _, row in df.iterrows():
@@ -56,44 +25,21 @@ def baca_transkrip_csv(csv_path: str) -> Dict[str, str]:
         result[audio_id] = kalimat
     return result
 
-
-# ══════════════════════════════════════════════════════════════════════════════
-# BAGIAN 2 — CACHE MFCC (INTI OPTIMASI)
-# Extract sekali, pakai berkali-kali
-# ══════════════════════════════════════════════════════════════════════════════
+# BAGIAN 2 — CACHE MFCC 
 
 def build_mfcc_cache(
     sampled_root   : str,
     dict_transkrip : Dict[str, str],
     verbose        : bool = True,
 ) -> Tuple[Dict[str, np.ndarray], List[Dict]]:
-    """
-    Extract MFCC semua audio dan simpan ke dictionary (in-memory cache).
-
-    KUNCI OPTIMASI: fungsi ini hanya dipanggil SEKALI di awal pipeline.
-    Semua tahap berikutnya (frame_per_kata, dekode, tuning) membaca dari
-    cache ini — tidak ada I/O file audio lagi.
-
-    Args:
-        sampled_root   : root folder audio WAV
-        dict_transkrip : {audio_id: kalimat}
-        verbose        : cetak progress
-
-    Returns:
-        cache_mfcc : {audio_id: np.ndarray (T, 39)}
-        meta_list  : list metadata untuk HasilMFCC.csv
-    """
     wav_files  = glob.glob(os.path.join(sampled_root, "**/*.wav"), recursive=True)
-    # Coba juga FLAC jika ada
-    wav_files += glob.glob(os.path.join(sampled_root, "**/*.flac"), recursive=True)
-
     cache_mfcc : Dict[str, np.ndarray] = {}
     meta_list  : List[Dict]            = []
     n_total    = len(wav_files)
     n_ok       = 0
 
     if verbose:
-        print(f"  Mengekstrak MFCC dari {n_total} file audio ...")
+        print(f" Mengekstrak MFCC dari {n_total} file audio ...")
 
     t0 = time.time()
     for idx, wav_path in enumerate(wav_files):
@@ -127,33 +73,18 @@ def build_mfcc_cache(
         print(f"  Selesai: {n_ok} audio di-cache dalam {time.time()-t0:.1f}s")
 
     return cache_mfcc, meta_list
-
-
-# ══════════════════════════════════════════════════════════════════════════════
-# BAGIAN 3 — KUMPULKAN FRAME PER KATA (dari cache)
-# ══════════════════════════════════════════════════════════════════════════════
+# BAGIAN 3 — KUMPULKAN FRAME PER KATA 
 
 def pecah_frame_per_kata(
     fitur    : np.ndarray,
     kata_list: List[str],
 ) -> Dict[str, np.ndarray]:
-    """
-    Bagi frame MFCC secara proporsional ke setiap kata dalam kalimat.
-    Bobot proporsional = panjang fonem tiap kata.
-
-    Args:
-        fitur     : (T, 39) MFCC satu audio
-        kata_list : kata-kata dalam kalimat
-
-    Returns:
-        {kata: np.ndarray(n_frame_kata, 39)}
-    """
     T, n_kata = fitur.shape[0], len(kata_list)
     if n_kata == 0 or T == 0:
         return {}
 
-    # Bobot = panjang fonem (proxy durasi kata)
-    bobot = np.array([max(len(kata_ke_fonem(k)), 1) for k in kata_list], dtype=float)
+    # Bobot = panjang fonem
+    bobot = np.array([max(len(func.kata_ke_fonem(k)), 1) for k in kata_list], dtype=float)
     bobot /= bobot.sum()
 
     n_frame = (bobot * T).astype(int)
@@ -182,28 +113,17 @@ def kumpulkan_frame_per_kata_dari_cache(
     dict_transkrip: Dict[str, str],
     verbose       : bool = True,
 ) -> Dict[str, List[np.ndarray]]:
-    """
-    Kumpulkan frame MFCC per kata dari cache (tanpa baca file!).
-
-    Args:
-        cache_mfcc    : {audio_id: (T, 39)} — hasil build_mfcc_cache
-        dict_transkrip: {audio_id: kalimat}
-        verbose       : cetak progress
-
-    Returns:
-        {kata: [array_frame_1, array_frame_2, ...]}
-    """
     frame_per_kata: Dict[str, List[np.ndarray]] = defaultdict(list)
     n_audio = len(cache_mfcc)
 
     if verbose:
-        print(f"  Mengumpulkan frame per kata dari {n_audio} audio (dari cache) ...")
+        print(f"  Mengumpulkan frame per kata dari {n_audio}")
 
     for audio_id, fitur in cache_mfcc.items():
         label     = dict_transkrip.get(audio_id, "")
         if label == "":
             continue
-        kata_list = normalisasi(label).split()
+        kata_list = lexicon_ngram.normalisasi(label).split()
         if not kata_list:
             continue
 
@@ -215,12 +135,7 @@ def kumpulkan_frame_per_kata_dari_cache(
         print(f"  Kata unik dengan frame: {len(frame_per_kata)}")
 
     return frame_per_kata
-
-
-# ══════════════════════════════════════════════════════════════════════════════
 # BAGIAN 4 — LATIH GMM PER KATA
-# ══════════════════════════════════════════════════════════════════════════════
-
 def latih_gmm_per_kata(
     frame_per_kata: Dict[str, List[np.ndarray]],
     n_components  : int   = 4,
@@ -228,21 +143,7 @@ def latih_gmm_per_kata(
     tol           : float = 1e-3,
     min_frame     : int   = 10,
     verbose       : bool  = True,
-) -> Dict[str, GaussianMixtureModel]:
-    """
-    Latih satu GMM per kata menggunakan frame MFCC yang telah dikumpulkan.
-
-    Args:
-        frame_per_kata : {kata: [array_frame]}
-        n_components   : K komponen GMM
-        n_iter         : maks iterasi EM
-        tol            : toleransi konvergensi
-        min_frame      : skip kata dengan < min_frame frame
-        verbose        : cetak progress
-
-    Returns:
-        {kata: GaussianMixtureModel}
-    """
+) -> Dict[str, func.GaussianMixtureModel]:
     gmm_per_kata: Dict[str, GaussianMixtureModel] = {}
     kata_list = sorted(frame_per_kata.keys())
     n_kata    = len(kata_list)
@@ -254,12 +155,11 @@ def latih_gmm_per_kata(
     t0 = time.time()
     for i, kata in enumerate(kata_list):
         frames_list = frame_per_kata[kata]
-        X = np.vstack(frames_list)   # gabung semua frame kata ini
+        X = np.vstack(frames_list) 
 
         if X.shape[0] < min_frame:
-            continue   # data terlalu sedikit → skip
-
-        K_eff = min(n_components, X.shape[0])   # jangan sampai K > T
+            continue  
+        K_eff = min(n_components, X.shape[0])  
         gmm   = GaussianMixtureModel(
             n_components = K_eff,
             n_iter       = n_iter,
@@ -277,12 +177,7 @@ def latih_gmm_per_kata(
         print(f"  GMM terlatih: {len(gmm_per_kata)} kata dalam {time.time()-t0:.1f}s")
 
     return gmm_per_kata
-
-
-# ══════════════════════════════════════════════════════════════════════════════
 # BAGIAN 5 — DEKODE AUDIO
-# Emission prob dari GMM per kata → pilih kata terbaik per segmen → N-Gram
-# ══════════════════════════════════════════════════════════════════════════════
 
 def dekode_audio(
     fitur        : np.ndarray,
@@ -291,35 +186,11 @@ def dekode_audio(
     ngram_model  : NGramModel,
     top_k        : int = 10,
 ) -> List[str]:
-    """
-    Dekode satu audio menjadi urutan kata.
-
-    Strategi:
-      1. Bagi frame sesuai jumlah kata referensi (segmentasi proporsional)
-      2. Untuk tiap segmen, pilih top-K kata dengan GMM score tertinggi
-      3. N-Gram beam search di antara kombinasi kandidat
-
-    Catatan metodologis:
-      - Referensi TIDAK dimasukkan sebagai kandidat (mencegah "kecurangan")
-      - Dekoder benar-benar memilih kata dari distribusi GMM + N-gram
-
-    Args:
-        fitur         : (T, 39) MFCC
-        kata_ref_list : kata referensi (untuk segmentasi saja, bukan kandidat!)
-        gmm_per_kata  : {kata: GMM}
-        ngram_model   : N-gram language model
-        top_k         : jumlah kandidat kata per segmen untuk N-gram rescore
-
-    Returns:
-        List[str] — urutan kata hipotesis
-    """
     if not gmm_per_kata or not kata_ref_list:
         return []
 
-    # Bagi frame sesuai referensi (sekadar untuk segmentasi temporal)
     pecahan = pecah_frame_per_kata(fitur, kata_ref_list)
 
-    # Daftar semua kata yang ada di GMM
     vocab_gmm = list(gmm_per_kata.keys())
 
     hasil_kata: List[str] = []
@@ -331,23 +202,14 @@ def dekode_audio(
             hasil_kata.append(vocab_gmm[0] if vocab_gmm else kata_seg)
             continue
 
-        # Hitung skor semua GMM kata
-        # Optimasi: vectorize dengan score tiap GMM — O(|vocab_gmm|)
         skor = {
             kata: gmm_per_kata[kata].score(seg_fitur)
             for kata in vocab_gmm
         }
-
-        # Ambil top-K kata untuk N-gram rescore (bukan seluruh vocab)
         sorted_kata = sorted(skor, key=skor.get, reverse=True)[:top_k]
-
-        # Pilih kata terbaik berdasarkan GMM score (sementara)
         best_gmm = sorted_kata[0]
         hasil_kata.append(best_gmm)
-
-    # N-Gram rescore: buat beberapa kandidat kalimat dan pilih yang terbaik
-    # Kandidat: GMM-best saja (tanpa referensi — metodologis benar)
-    # Kalau ingin beam, bisa diperluas ke kombinasi top-K antar posisi
+        
     kandidat = [hasil_kata]
     return ngram_model.rescore(kandidat)
 
@@ -360,20 +222,6 @@ def dekode_semua_audio(
     top_k        : int = 10,
     verbose       : bool = True,
 ) -> List[Dict]:
-    """
-    Dekode semua audio dari cache dan hitung WER tiap audio.
-
-    Args:
-        cache_mfcc    : {audio_id: (T, 39)} — dari build_mfcc_cache
-        dict_transkrip: {audio_id: kalimat}
-        gmm_per_kata  : {kata: GMM}
-        ngram_model   : N-gram LM
-        top_k         : kandidat N-gram per posisi
-        verbose       : print progress
-
-    Returns:
-        list dict hasil WER tiap audio
-    """
     hasil_wer = []
     n_total   = len(cache_mfcc)
     n_ok      = 0
@@ -421,18 +269,9 @@ def dekode_semua_audio(
 
     return hasil_wer
 
-
-# ══════════════════════════════════════════════════════════════════════════════
 # BAGIAN 6 — RINGKASAN WER
-# ══════════════════════════════════════════════════════════════════════════════
 
 def ringkasan_wer(df_wer: pd.DataFrame, label: str = "") -> Dict:
-    """
-    Hitung dan cetak ringkasan statistik WER.
-
-    Returns:
-        dict ringkasan
-    """
     if len(df_wer) == 0:
         print("  [WARNING] Tidak ada data WER")
         return {}
@@ -472,11 +311,7 @@ def ringkasan_wer(df_wer: pd.DataFrame, label: str = "") -> Dict:
     }
 
 
-# ══════════════════════════════════════════════════════════════════════════════
 # BAGIAN 7 — HYPERPARAMETER TUNING (EFISIEN)
-# MFCC sudah di-cache → hanya re-train GMM & re-decode
-# frame_per_kata sudah dikumpulkan → tidak perlu loop audio lagi
-# ══════════════════════════════════════════════════════════════════════════════
 
 def hyperparameter_tuning(
     frame_per_kata : Dict[str, List[np.ndarray]],
@@ -487,28 +322,6 @@ def hyperparameter_tuning(
     n_gram         : int = 3,
     verbose        : bool = True,
 ) -> pd.DataFrame:
-    """
-    Hyperparameter tuning GMM — K komponen, toleransi, maks iterasi.
-    Tabel 3.4.1 skripsi.
-
-    KUNCI EFISIENSI:
-      - frame_per_kata sudah ada → tidak perlu loop audio
-      - cache_mfcc sudah ada → tidak perlu extract MFCC
-      - Hanya GMM training + dekode yang diulang per kombinasi parameter
-
-    Args:
-        frame_per_kata : {kata: [frame]} dari kumpulkan_frame_per_kata_dari_cache
-        cache_mfcc     : {audio_id: (T,39)} dari build_mfcc_cache
-        dict_transkrip : {audio_id: kalimat}
-        ngram_model    : N-gram LM (sudah dilatih, tidak perlu re-train)
-        dir_save       : folder output
-        n_gram         : orde N-gram (untuk info saja)
-        verbose        : print progress
-
-    Returns:
-        DataFrame hasil tuning diurutkan WER terbaik
-    """
-    # Grid parameter sesuai Tabel 3.4.1 skripsi
     grid = [
         (K, tol, max_iter)
         for K        in [4, 8, 16, 32]
@@ -528,16 +341,13 @@ def hyperparameter_tuning(
         t0 = time.time()
         print(f"\n  [{idx}/{n_eksp}] K={K}, tol={tol:.0e}, max_iter={max_iter}")
 
-        # ── Hanya latih ulang GMM (tidak extract MFCC / kumpulkan frame) ──
         gmm_per_kata = latih_gmm_per_kata(
             frame_per_kata = frame_per_kata,
             n_components   = K,
             n_iter         = max_iter,
             tol            = tol,
-            verbose        = False,   # supaya output tidak terlalu ramai
+            verbose        = False,  
         )
-
-        # ── Dekode dari cache (tidak baca file audio lagi) ──────────────
         hasil_wer = dekode_semua_audio(
             cache_mfcc    = cache_mfcc,
             dict_transkrip= dict_transkrip,
@@ -546,7 +356,6 @@ def hyperparameter_tuning(
             verbose       = False,
         )
 
-        # ── Hitung WER corpus ────────────────────────────────────────────
         if hasil_wer:
             df_tmp     = pd.DataFrame(hasil_wer)
             total_errs = df_tmp["S"].sum() + df_tmp["D"].sum() + df_tmp["I"].sum()
@@ -567,16 +376,15 @@ def hyperparameter_tuning(
             "Waktu (s)"     : round(elapsed, 1),
         })
 
-    # Urutkan berdasarkan WER terbaik
     df_tuning = pd.DataFrame(hasil_tuning).sort_values("WER Corpus (%)")
     df_tuning.to_csv(f"{dir_save}/HasilHyperparameterTuning_GMM.csv", index=False)
 
     total_elapsed = time.time() - t0_total
-    print(f"\n── Hasil Tuning (diurutkan WER) ──────────────────────")
+    print(f"\n Hasil Tuning (diurutkan WER)")
     print(df_tuning.to_string(index=False))
 
     best = df_tuning.iloc[0]
-    print(f"\n  ✓ Parameter Terbaik: K={int(best['K Komponen'])}, "
+    print(f"\nParameter Terbaik: K={int(best['K Komponen'])}, "
           f"tol={best['Toleransi']:.0e}, iter={int(best['Maks Iterasi'])}, "
           f"WER={best['WER Corpus (%)']:.2f}%")
     print(f"  Total waktu tuning: {total_elapsed/60:.1f} menit")
