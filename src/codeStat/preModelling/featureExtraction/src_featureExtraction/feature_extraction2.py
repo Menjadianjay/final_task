@@ -1,47 +1,17 @@
-"""
-feature_extraction.py
-=====================
-Ekstraksi fitur MFCC (Mel-Frequency Cepstral Coefficients) beserta
-turunan delta dan delta-delta → vektor 39 dimensi.
-
-Sesuai sub-bab 3.3.4 skripsi:
-  3.3.4.1  Pre-emphasis     → formula 3.3.4.1.1 : X(n) = y(n) - a × y(n-1)
-  3.3.4.2  Framing          → frame size 25ms, shift 10ms
-  3.3.4.3  Windowing        → Hamming window (formula 2.3)
-  3.3.4.4  FFT              → rFFT + zero-padding
-  3.3.4.5  Mel Filter Bank  → 26 filter, formula 2.4: Mel(f) = 1127 ln(1+f/700)
-  3.3.4.6  Log Energy       → log10 energi mel
-  3.3.4.7  DCT              → 13 koefisien MFCC
-  + Delta & Delta-Delta     → total 39 dimensi
-
-Optimasi:
-  - Seluruh komputasi vectorized (NumPy)
-  - Filter bank dihitung sekali dan di-cache (tidak dihitung ulang tiap audio)
-  - Menggunakan librosa sebagai backend utama (sudah sangat optimal)
-  - Fallback manual jika librosa tidak tersedia
-"""
-
 import numpy as np
 import os
 
-# ── Coba import librosa (lebih cepat dan teruji) ─────────────────────────────
 try:
     import librosa
     LIBROSA_AVAILABLE = True
 except ImportError:
     LIBROSA_AVAILABLE = False
-
-# ── Coba import scipy untuk pembacaan WAV ─────────────────────────────────────
 try:
     from scipy.io import wavfile
     SCIPY_AVAILABLE = True
 except ImportError:
     SCIPY_AVAILABLE = False
-
-
-# ══════════════════════════════════════════════════════════════════════════════
-# PARAMETER EKSTRAKSI MFCC (sesuai skripsi)
-# ══════════════════════════════════════════════════════════════════════════════
+    
 SR          = 16000   # sample rate (Hz)
 N_MFCC      = 13      # jumlah koefisien MFCC
 N_FFT       = 512     # ukuran FFT (zero-padded)
@@ -54,30 +24,8 @@ FMAX        = 4000.0  # batas atas frekuensi mel filter (sesuai tabel 3.3.4.5.7)
 DELTA_WIDTH = 2       # lebar window delta (standar MFCC)
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# EKSTRAKSI UTAMA — menggunakan librosa (recommended)
-# ══════════════════════════════════════════════════════════════════════════════
 
 def extract_features(wav_path: str) -> np.ndarray:
-    """
-    Ekstrak fitur MFCC 39-dim dari file WAV.
-
-    Pipeline:
-      1. Load audio → resample ke SR jika perlu
-      2. Pre-emphasis
-      3. MFCC (13 koef) via librosa
-      4. Delta + Delta-Delta
-      5. Concatenate → (T, 39)
-
-    Args:
-        wav_path : path file .wav atau .flac
-
-    Returns:
-        fitur : np.ndarray shape (T, 39)
-
-    Raises:
-        RuntimeError jika file tidak bisa dibaca
-    """
     if not os.path.isfile(wav_path):
         raise FileNotFoundError(f"File tidak ditemukan: {wav_path}")
 
@@ -88,10 +36,7 @@ def extract_features(wav_path: str) -> np.ndarray:
 
 
 def _extract_librosa(wav_path: str) -> np.ndarray:
-    """
-    Ekstrak MFCC menggunakan librosa — jauh lebih cepat dan stabil.
-    """
-    # Load audio (auto-resample ke SR)
+    # Load audio
     y, sr = librosa.load(wav_path, sr=SR, mono=True)
 
     if len(y) == 0:
@@ -114,21 +59,16 @@ def _extract_librosa(wav_path: str) -> np.ndarray:
         window    = "hamming",        # Hamming window [formula 2.3]
     )   # shape: (13, T)
 
-    # Delta (turunan pertama) dan Delta-Delta (turunan kedua)
+    # Delta (turunan pertama dan turunan kedua)
     delta    = librosa.feature.delta(mfcc, width=DELTA_WIDTH * 2 + 1)
     delta2   = librosa.feature.delta(mfcc, order=2, width=DELTA_WIDTH * 2 + 1)
 
-    # Gabungkan → (39, T) → transpose → (T, 39)
     fitur = np.vstack([mfcc, delta, delta2]).T
 
     return fitur.astype(np.float32)
 
 
 def _extract_manual(wav_path: str) -> np.ndarray:
-    """
-    Fallback manual tanpa librosa — menggunakan scipy + NumPy.
-    Lebih lambat, digunakan hanya jika librosa tidak ada.
-    """
     # Load WAV
     if SCIPY_AVAILABLE:
         sr, audio = wavfile.read(wav_path)
@@ -137,9 +77,8 @@ def _extract_manual(wav_path: str) -> np.ndarray:
         elif audio.dtype == np.int32:
             audio = audio.astype(np.float32) / 2147483648.0
     else:
-        raise ImportError("librosa atau scipy diperlukan. Install: pip install librosa")
-
-    # Resample sederhana jika sr berbeda
+        raise ImportError("librosa atau scipy diperlukan")
+    #resample
     if sr != SR:
         ratio = SR / sr
         n_new = int(len(audio) * ratio)
@@ -180,11 +119,6 @@ def _extract_manual(wav_path: str) -> np.ndarray:
 
     return np.concatenate([mfcc, delta, delta2], axis=1).astype(np.float32)
 
-
-# ══════════════════════════════════════════════════════════════════════════════
-# FUNGSI HELPER (manual fallback)
-# ══════════════════════════════════════════════════════════════════════════════
-
 def _framing(y: np.ndarray, win_len: int, hop_len: int) -> np.ndarray:
     """Potong sinyal menjadi frame-frame."""
     n_frames = 1 + (len(y) - win_len) // hop_len
@@ -200,7 +134,7 @@ def _mel_filterbank(
 ) -> np.ndarray:
     """
     Buat mel filter bank.
-    Formula mel: Mel(f) = 1127 × ln(1 + f/700)  [formula 2.4]
+    Formula mel: Mel(f) = 1127 × ln(1 + f/700)
     """
     def hz_to_mel(f):  return 1127.0 * np.log1p(f / 700.0)
     def mel_to_hz(m):  return 700.0 * (np.exp(m / 1127.0) - 1.0)
@@ -224,7 +158,6 @@ def _mel_filterbank(
 
 
 def _dct(x: np.ndarray, n_coeff: int) -> np.ndarray:
-    """DCT tipe-II untuk konversi log-mel → MFCC."""
     T, N  = x.shape
     n_idx = np.arange(n_coeff)
     k_idx = np.arange(N) + 0.5
@@ -233,7 +166,6 @@ def _dct(x: np.ndarray, n_coeff: int) -> np.ndarray:
 
 
 def _compute_delta(feat: np.ndarray, width: int = 2) -> np.ndarray:
-    """Hitung delta (turunan numerik) dari fitur."""
     T, D    = feat.shape
     delta   = np.zeros_like(feat)
     denom   = 2.0 * sum(i ** 2 for i in range(1, width + 1))
