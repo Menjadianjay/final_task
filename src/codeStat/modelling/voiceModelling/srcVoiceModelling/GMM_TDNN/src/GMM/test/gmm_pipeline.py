@@ -144,7 +144,7 @@ def latih_gmm_per_kata(
     min_frame     : int   = 10,
     verbose       : bool  = True,
 ) -> Dict[str, func.GaussianMixtureModel]:
-    gmm_per_kata: Dict[str, GaussianMixtureModel] = {}
+    gmm_per_kata: Dict[str, func.GaussianMixtureModel] = {}
     kata_list = sorted(frame_per_kata.keys())
     n_kata    = len(kata_list)
 
