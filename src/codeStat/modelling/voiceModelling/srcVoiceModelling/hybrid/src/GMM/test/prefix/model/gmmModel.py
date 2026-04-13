@@ -1,6 +1,6 @@
 class GaussianMixtureModel:
     """
-    GMM dengan diagonal covariance, implementasi manual (tanpa sklearn).
+    GMM dengan diagonal covariance, implementasi manual.
 
     Parameters
     ----------
