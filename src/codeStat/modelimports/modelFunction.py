@@ -21,11 +21,11 @@ from codeStat.preModelling.featureExtraction.src_featureExtraction.feature_extra
 import codeStat.preModelling.featureExtraction.src_featureExtraction.feature_extraction2 as feature_Extraction2
 from codeStat.preModelling.featureExtraction.src_featureExtraction.feature_extraction2 import *
 #GMM
-import codeStat.modelling.voiceModelling.srcVoiceModelling.GMM_TDNN.src.GMM.test.gmm as GMM
-from codeStat.modelling.voiceModelling.srcVoiceModelling.GMM_TDNN.src.GMM.test.gmm import *
+import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.gmm as GMM
+from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.gmm import *
 #GMM_PIPELINE
-import codeStat.modelling.voiceModelling.srcVoiceModelling.GMM_TDNN.src.GMM.test.gmm_pipeline as GMM_pipeline
-from codeStat.modelling.voiceModelling.srcVoiceModelling.GMM_TDNN.src.GMM.test.gmm_pipeline import *
+import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.gmmpipeline as GMM_pipeline
+from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.gmmpipeline import *
 #Lexicon_Ngram
 import codeStat.modelling.languageModelling.srcLanguageModelling.lexicon_ngram as lexicon_ngram
 from codeStat.modelling.languageModelling.srcLanguageModelling.lexicon_ngram import *
