@@ -1,5 +1,5 @@
-import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.model.impgmm as GMM
-from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.model.impgmm import *
+import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.impgmm as GMM
+from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.impgmm import *
 
 _SR         = 16000
 _N_MFCC     = 13
@@ -136,14 +136,7 @@ def build_mfcc_cache(
     sampled_root   : str,
     dict_transkrip : Dict[str, str],
 ) -> Tuple[Dict[str, np.ndarray], List[Dict]]:
-    """
-    Extract MFCC semua audio SEKALI → simpan di dict.
-    Semua tahap selanjutnya baca dari dict ini, tidak buka file lagi.
-
-    Returns:
-        cache_mfcc : {audio_id: (T, 39)}
-        meta_list  : list info untuk HasilMFCC.csv
-    """
+    
     wav_files  = glob.glob(os.path.join(sampled_root, "**/*.wav"),  recursive=True)
     wav_files += glob.glob(os.path.join(sampled_root, "**/*.flac"), recursive=True)
 
