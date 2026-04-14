@@ -1,16 +1,4 @@
 class GaussianMixtureModel:
-    """
-    GMM dengan diagonal covariance, implementasi manual.
-
-    Parameters
-    ----------
-    n_components : K komponen Gaussian
-    n_iter       : maks iterasi EM
-    tol          : toleransi konvergensi log-likelihood
-    reg_covar    : regularisasi covariance
-    random_state : seed random
-    """
-
     def __init__(
         self,
         n_components: int = 4,
