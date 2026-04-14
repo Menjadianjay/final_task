@@ -1,3 +1,7 @@
+
+import codeStat.modelimports.modelFunction as func
+from codeStat.modelimports.modelFunction import *
+
 class GaussianMixtureModel:
     def __init__(
         self,

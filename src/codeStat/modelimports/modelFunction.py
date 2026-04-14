@@ -55,4 +55,6 @@ from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.pre
     # Word Error Rate
 import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.past.WER as wer
 from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.past.WER import *
-
+# GMM Import 
+import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.impgmm as impLib
+from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.impgmm import *

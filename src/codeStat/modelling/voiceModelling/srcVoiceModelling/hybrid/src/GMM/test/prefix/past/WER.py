@@ -1,4 +1,5 @@
-
+import codeStat.modelimports.modelFunction as func
+from codeStat.modelimports.modelFunction import *
 
 def compute_wer(referensi: List[str], hipotesis: List[str]) -> Dict:
     R, H = len(referensi), len(hipotesis)

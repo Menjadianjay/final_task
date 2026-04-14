@@ -1,5 +1,5 @@
-from typing import Dict, List, Tuple, Optional
-import re
+import codeStat.modelimports.modelFunction as func
+from codeStat.modelimports.modelFunction import *
 
 
 PETA_FONEM: Dict[str, List[str]] = {

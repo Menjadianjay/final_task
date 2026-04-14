@@ -1,12 +1,13 @@
-# ══════════════════════════════════════════════════════════════════════════════
-# BAGIAN 9 — HYPERPARAMETER TUNING (EFISIEN)
-# ══════════════════════════════════════════════════════════════════════════════
+import codeStat.modelimports.modelFunction as func
+from codeStat.modelimports.modelFunction import *
+
+# Hyperparameter Tunning
 
 def hyperparameter_tuning(
     frame_per_kata : Dict[str, List[np.ndarray]],
     cache_mfcc     : Dict[str, np.ndarray],
     dict_transkrip : Dict[str, str],
-    ngram_model    : NGramModel,s
+    ngram_model    : NGramModel,
     dir_save       : str = ".",
 ) -> pd.DataFrame:
     grid = [

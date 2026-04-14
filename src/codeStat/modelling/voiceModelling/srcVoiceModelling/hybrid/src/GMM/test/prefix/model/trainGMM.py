@@ -1,7 +1,7 @@
+import codeStat.modelimports.modelFunction as func
+from codeStat.modelimports.modelFunction import *
 
-# ══════════════════════════════════════════════════════════════════════════════
 # BAGIAN 7 — FRAME PER KATA & LATIH GMM PER KATA
-# ══════════════════════════════════════════════════════════════════════════════
 
 def pecah_frame_per_kata(
     fitur    : np.ndarray,
