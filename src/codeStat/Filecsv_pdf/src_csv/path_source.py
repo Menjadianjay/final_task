@@ -1,4 +1,5 @@
 import sys
+from pathlib import Path
 
 list_path = [
     'D:/doc/2026/FINAL_CODE/src',
@@ -16,7 +17,16 @@ list_path = [
 ]
 
 for path in list_path:
-    if path not in sys.path:
-        sys.path.append(path)
+    if path in sys.path:
+        sys.path.remove(path)
+
+def find_root(marker='src'):
+    path = Path(__file__).resolve()
+    for parent in path.parents:
+        if parent.name == marker:
+            return parent
+    raise FileNotFoundError(f"Could not find root folder: '{marker}'")
+
+sys.path.insert(0, str(find_root('src')))
 
 print(sys.path)
