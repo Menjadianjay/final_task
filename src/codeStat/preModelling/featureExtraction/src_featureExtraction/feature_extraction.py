@@ -1,7 +1,6 @@
-import numpy as np
-import codeStat.modelimports.modelFunction as func
+import sys
+sys.path.insert(0, r"D:\doc\2026\FINAL_CODE\src") 
 from codeStat.modelimports.modelFunction import *
-
 # ─────────────────────────────────────────────
 #  Step 1 : Pre-Emphasis
 # ─────────────────────────────────────────────

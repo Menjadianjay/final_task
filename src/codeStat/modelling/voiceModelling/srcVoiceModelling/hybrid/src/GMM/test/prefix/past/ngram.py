@@ -1,3 +1,6 @@
+import codeStat.modelimports.modelFunction as func
+from codeStat.modelimports.modelFunction import *
+
 class NGramModel:
     """Trigram Language Model dengan Kneser-Ney smoothing."""
 

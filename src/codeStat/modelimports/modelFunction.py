@@ -1,5 +1,35 @@
+import sys
+sys.path.insert(0, r"D:\doc\2026\FINAL_CODE\src") 
 import os
-os.chdir(r"D:\doc\2026\FINAL_CODE\src")
+import re
+import glob
+import math
+import time
+import soundfile as sf
+import matplotlib
+import numpy as np
+import pandas as pd
+from collections import defaultdict
+from typing import Dict, List, Tuple, Optional
+
+
+try:
+    import librosa
+    _LIBROSA = True
+except ImportError:
+    librosa = None
+    _LIBROSA = False
+    print("[WARNING] librosa not installed")
+
+try:
+    import scipy.io.wavfile as _wavfile
+    _SCIPY = True
+except ImportError:
+    _wavfile = None
+    _SCIPY = False
+    print("[WARNING] scipy not installed")
+
+
 
 base_dir = 'D:/doc/2026/FINAL_CODE/'
 all_data_root = f'{base_dir}data/Data'
@@ -56,3 +86,28 @@ from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.pre
 import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.past.WER as wer
 from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.past.WER import *
 
+   
+__all__ = [
+    "os", "re", "glob", "math", "time",
+    "np", "pd","sf","matplotlib",
+    "defaultdict",
+    "Dict", "List", "Tuple", "Optional",
+    "librosa","_LIBROSA","_SCIPY","_wavfile",
+
+    "cnv",                  # converting_file
+    "Sampling_Quantization",# sampling & quantization
+    "VAD",                  # voice activity detection
+    "feature_Extraction",   # feature extraction
+    "feature_Extraction2",  # feature extraction 2
+    "GMM",                  # gmm
+    "GMM_pipeline",         # gmmpipeline
+    "lexicon_ngram",        # lexicon & ngram
+
+    "ekstraksiPRE",         # ekstraksiMFCC
+    "gmmModel",             # gmmModel
+    "trainGMM",             # trainGMM
+    "hyperParams",          # hyperparameter tuning
+    "ngram",                # language ngram model
+    "normLexicon",          # normalisasi lexicon
+    "wer",                  # word error rate
+]

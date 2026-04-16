@@ -1,5 +1,6 @@
-import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.impgmm as GMM
-from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.impgmm import *
+import sys
+sys.path.insert(0, r"D:\doc\2026\FINAL_CODE\src") 
+from codeStat.modelimports.modelFunction import *
 
 _SR         = 16000
 _N_MFCC     = 13

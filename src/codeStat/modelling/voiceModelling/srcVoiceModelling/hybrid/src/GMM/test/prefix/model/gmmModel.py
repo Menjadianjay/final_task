@@ -1,3 +1,7 @@
+import sys
+sys.path.insert(0, r"D:\doc\2026\FINAL_CODE\src") 
+from codeStat.modelimports.modelFunction import *
+
 class GaussianMixtureModel:
     def __init__(
         self,
@@ -91,7 +95,7 @@ class GaussianMixtureModel:
         return self
 
     def score(self, X: np.ndarray) -> float:
-        """Rata-rata log p(X) — digunakan sebagai emission probability."""
+        """Rata-rata log p(X) untuk emission probability."""
         assert X.ndim == 2, "X harus shape (T, D)"
         K = self.n_components
         T = X.shape[0]
