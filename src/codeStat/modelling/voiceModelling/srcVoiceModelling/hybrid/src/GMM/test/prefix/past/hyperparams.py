@@ -1,5 +1,5 @@
-import codeStat.modelimports.modelFunction as func
 from codeStat.modelimports.modelFunction import *
+# simplest way to connect the import library to function file
 
 # Hyperparameter Tunning
 
@@ -13,7 +13,7 @@ def hyperparameter_tuning(
     grid = [
         (K, tol, mi)
         for K  in [4, 8, 16, 32]
-        for tol in [1e-3, 1e-4]
+        for tol in [1e-3, 1e-4]  #this toleration have to be studied further
         for mi in [50, 100, 200]
     ]
     n_eksp = len(grid)

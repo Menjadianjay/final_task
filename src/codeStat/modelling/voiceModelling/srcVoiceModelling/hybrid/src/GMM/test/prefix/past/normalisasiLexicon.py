@@ -1,4 +1,3 @@
-import codeStat.modelimports.modelFunction as func
 from codeStat.modelimports.modelFunction import *
 
 

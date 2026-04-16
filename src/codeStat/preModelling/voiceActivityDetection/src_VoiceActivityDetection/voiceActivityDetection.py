@@ -1,10 +1,6 @@
-import soundfile as sf
-import numpy as np
-import pandas as pd
-import matplotlib
-matplotlib.use("Agg")          # non-GUI backend
-
-
+import sys
+sys.path.insert(0, r"D:\doc\2026\FINAL_CODE\src") 
+from codeStat.modelimports.modelFunction import *
 
 def voice_activity_detection(
     quantized  : np.ndarray,

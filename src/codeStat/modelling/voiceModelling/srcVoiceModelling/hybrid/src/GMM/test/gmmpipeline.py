@@ -1,20 +1,6 @@
 import sys
-import os
-sys.path.insert(0, r"D:\doc\2026\FINAL_CODE\src")
-
-import os
-import glob
-import time
-import numpy as np
-import pandas as pd
-from collections import defaultdict
-from concurrent.futures import ProcessPoolExecutor, as_completed
-from typing import Dict, List, Tuple, Optional
-
-import codeStat.modelimports.modelFunction as func
+sys.path.insert(0, r"D:\doc\2026\FINAL_CODE\src") 
 from codeStat.modelimports.modelFunction import *
-import codeStat.modelling.languageModelling.srcLanguageModelling.lexicon_ngram as lexicon_ngram
-from codeStat.modelling.languageModelling.srcLanguageModelling.lexicon_ngram import *
 
 def baca_transkrip_csv(csv_path: str) -> Dict[str, str]:
     df = pd.read_csv(csv_path)
@@ -49,7 +35,7 @@ def build_mfcc_cache(
             if label == "":
                 continue  # skip audio tanpa transkrip
 
-            fitur = func.extract_features(wav_path)   # (T, 39)
+            fitur = extract_features(wav_path)   # (T, 39)
             cache_mfcc[audio_id] = fitur
             meta_list.append({
                 "Id"           : audio_id,
@@ -84,7 +70,7 @@ def pecah_frame_per_kata(
         return {}
 
     # Bobot = panjang fonem
-    bobot = np.array([max(len(func.kata_ke_fonem(k)), 1) for k in kata_list], dtype=float)
+    bobot = np.array([max(len(kata_ke_fonem(k)), 1) for k in kata_list], dtype=float)
     bobot /= bobot.sum()
 
     n_frame = (bobot * T).astype(int)
@@ -143,8 +129,8 @@ def latih_gmm_per_kata(
     tol           : float = 1e-3,
     min_frame     : int   = 10,
     verbose       : bool  = True,
-) -> Dict[str, func.GaussianMixtureModel]:
-    gmm_per_kata: Dict[str, func.GaussianMixtureModel] = {}
+) -> Dict[str, GaussianMixtureModel]:
+    gmm_per_kata: Dict[str, GaussianMixtureModel] = {}
     kata_list = sorted(frame_per_kata.keys())
     n_kata    = len(kata_list)
 

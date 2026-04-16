@@ -1,4 +1,3 @@
-import codeStat.modelimports.modelFunction as func
 from codeStat.modelimports.modelFunction import *
 
 def compute_wer(referensi: List[str], hipotesis: List[str]) -> Dict:
@@ -30,9 +29,7 @@ def compute_wer(referensi: List[str], hipotesis: List[str]) -> Dict:
     N   = R
     wer = (S + D + I) / N if N > 0 else 0.0
     return {"wer_persen": round(wer * 100, 2), "S": S, "D": D, "I": I, "N": N}
-# ══════════════════════════════════════════════════════════════════════════════
-# BAGIAN 8 — DEKODE & STATISTIK WER
-# ══════════════════════════════════════════════════════════════════════════════
+# Bagian Decode dan statistic WER
 
 def dekode_audio(
     fitur        : np.ndarray,
@@ -53,7 +50,7 @@ def dekode_audio(
             hasil.append(vocab_gmm[0] if vocab_gmm else kata_seg)
             continue
 
-        # Hitung skor semua GMM kata → pilih terbaik
+        # Hitung skor semua GMM kata dan pilih terbaik
         skor    = {k: gmm_per_kata[k].score(seg) for k in vocab_gmm}
         best    = max(skor, key=skor.get)
         hasil.append(best)
@@ -110,8 +107,8 @@ def dekode_semua_audio(
     if verbose:
         print(f"  Selesai: {len(hasil_wer)} audio dalam {time.time()-t0:.1f}s")
     return hasil_wer
+
 def ringkasan_wer(df_wer: pd.DataFrame, label: str = "") -> Dict:
-    """Cetak dan kembalikan statistik WER."""
     if df_wer.empty:
         print("  [WARNING] Tidak ada data WER")
         return {}
