@@ -1,7 +1,8 @@
+import sys
+sys.path.insert(0, r"D:\doc\2026\FINAL_CODE\src") 
+from codeStat.modelimports.modelFunction import *
 
-# ══════════════════════════════════════════════════════════════════════════════
 # BAGIAN 7 — FRAME PER KATA & LATIH GMM PER KATA
-# ══════════════════════════════════════════════════════════════════════════════
 
 def pecah_frame_per_kata(
     fitur    : np.ndarray,

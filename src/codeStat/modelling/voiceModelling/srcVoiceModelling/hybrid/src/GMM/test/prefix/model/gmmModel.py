@@ -1,16 +1,8 @@
+import sys
+sys.path.insert(0, r"D:\doc\2026\FINAL_CODE\src") 
+from codeStat.modelimports.modelFunction import *
+
 class GaussianMixtureModel:
-    """
-    GMM dengan diagonal covariance, implementasi manual.
-
-    Parameters
-    ----------
-    n_components : K komponen Gaussian
-    n_iter       : maks iterasi EM
-    tol          : toleransi konvergensi log-likelihood
-    reg_covar    : regularisasi covariance
-    random_state : seed random
-    """
-
     def __init__(
         self,
         n_components: int = 4,
@@ -103,7 +95,7 @@ class GaussianMixtureModel:
         return self
 
     def score(self, X: np.ndarray) -> float:
-        """Rata-rata log p(X) — digunakan sebagai emission probability."""
+        """Rata-rata log p(X) untuk emission probability."""
         assert X.ndim == 2, "X harus shape (T, D)"
         K = self.n_components
         T = X.shape[0]

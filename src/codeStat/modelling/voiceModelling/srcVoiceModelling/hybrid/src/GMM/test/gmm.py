@@ -1,6 +1,6 @@
-import numpy as np
-from typing import Optional
-
+import sys
+sys.path.insert(0, r"D:\doc\2026\FINAL_CODE\src") 
+from codeStat.modelimports.modelFunction import *
 
 class GaussianMixtureModel:
     def __init__(
