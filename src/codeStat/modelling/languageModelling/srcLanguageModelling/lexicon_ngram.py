@@ -1,10 +1,9 @@
-import re
-import math
-from collections import defaultdict
-from typing import Dict, List, Tuple
+import sys
+sys.path.insert(0, r"D:\doc\2026\FINAL_CODE\src") 
+from codeStat.modelimports.modelFunction import *
 
 #  pemetaan huruf ke fonem Bahasa Jawa
-# Digraf harus diletakkan sebelum monograf agar diprioritaskan
+#  Digraf harus diletakkan sebelum monograf agar diprioritaskan
 PETA_FONEM: Dict[str, List[str]] = {
     # Digraf khas Bahasa Jawa
     "ng": ["ng"],
@@ -37,7 +36,7 @@ def kata_ke_fonem(kata: str) -> List[str]:
             fonem.extend(PETA_FONEM[kata[i]])
             i += 1
         else:
-            i += 1  
+            i += 1
     return fonem if fonem else [kata]
 
 
