@@ -1,4 +1,4 @@
-# GMM-TDNN ASR — Bahasa Jawa
+# HYBRID GMM-TDNN DAN TDNN ASR — Bahasa Jawa
 
 > Perbandingan Kinerja Model Hybrid GMM-TDNN dan TDNN dalam Pengenalan Bahasa Jawa
 
