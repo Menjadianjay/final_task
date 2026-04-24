@@ -1,4 +1,12 @@
-from codeStat.modelimports.modelFunction import *
+from typing import Dict, List, Tuple, Optional
+import numpy as np
+import pandas as pd
+import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.past.ngram as ngram
+from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.past.ngram import *
+import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.model.gmmModel as gmmModel
+from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.model.gmmModel import *
+import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.model.trainGMM as trainGMM
+from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.model.trainGMM import *
 
 def compute_wer(referensi: List[str], hipotesis: List[str]) -> Dict:
     R, H = len(referensi), len(hipotesis)

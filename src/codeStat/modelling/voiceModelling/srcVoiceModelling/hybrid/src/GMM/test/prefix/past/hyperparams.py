@@ -1,7 +1,13 @@
-from codeStat.modelimports.modelFunction import *
-# simplest way to connect the import library to function file
-
-# Hyperparameter Tunning
+from typing import Dict, List, Tuple, Optional
+import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.past.ngram as ngram
+from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.past.ngram import *
+import numpy as np
+import pandas as pd
+import time
+import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.model.trainGMM as trainGMM
+from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.model.trainGMM import *
+import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.gmmpipeline as GMM_pipeline
+from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.gmmpipeline import *
 
 def hyperparameter_tuning(
     frame_per_kata : Dict[str, List[np.ndarray]],
@@ -12,7 +18,7 @@ def hyperparameter_tuning(
 ) -> pd.DataFrame:
     grid = [
         (K, tol, mi)
-        for K  in [4, 8, 16, 32]
+        for K  in [4, 8, 16, 32] 
         for tol in [1e-3, 1e-4]  #this toleration have to be studied further
         for mi in [50, 100, 200]
     ]
