@@ -1,6 +1,7 @@
-import sys
-sys.path.insert(0, r"D:\doc\2026\FINAL_CODE\src") 
-from codeStat.modelimports.modelFunction import *
+from typing import Dict, List
+import re
+from collections import defaultdict
+import math
 
 #  pemetaan huruf ke fonem Bahasa Jawa
 #  Digraf harus diletakkan sebelum monograf agar diprioritaskan

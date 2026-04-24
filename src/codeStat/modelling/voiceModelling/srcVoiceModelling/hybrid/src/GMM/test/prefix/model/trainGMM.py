@@ -1,6 +1,9 @@
-import sys
-sys.path.insert(0, r"D:\doc\2026\FINAL_CODE\src") 
-from codeStat.modelimports.modelFunction import *
+from collections import defaultdict
+from typing import Dict, List
+import numpy as np
+import time
+from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.model.gmmModel import GaussianMixtureModel
+from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.past.normalisasiLexicon import normalisasi, kata_ke_fonem 
 
 # BAGIAN 7 — FRAME PER KATA & LATIH GMM PER KATA
 

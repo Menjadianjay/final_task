@@ -1,6 +1,18 @@
-import sys
-sys.path.insert(0, r"D:\doc\2026\FINAL_CODE\src") 
-from codeStat.modelimports.modelFunction import *
+from typing import Dict, List, Tuple, Optional
+import pandas as pd
+import os
+import glob
+import numpy as np
+import time
+from collections import defaultdict
+import codeStat.preModelling.featureExtraction.src_featureExtraction.feature_extraction2 as feature_Extraction2
+from codeStat.preModelling.featureExtraction.src_featureExtraction.feature_extraction2 import *
+import codeStat.modelling.languageModelling.srcLanguageModelling.lexicon_ngram as lexicon_ngram
+from codeStat.modelling.languageModelling.srcLanguageModelling.lexicon_ngram import *
+import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.gmm as GMM
+from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.gmm import *
+import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.past.WER as wer
+from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.past.WER import *
 
 def baca_transkrip_csv(csv_path: str) -> Dict[str, str]:
     df = pd.read_csv(csv_path)
