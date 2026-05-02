@@ -72,19 +72,19 @@ from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.pre
     # TRAINMODEL
 import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.model.trainGMM as trainGMM
 from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.model.trainGMM import *
-# past
+# post
     # hyperparameter Tunning
-import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.past.hyperparams as hyperParams
-from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.past.hyperparams import *
+import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.post.hyperparams as hyperParams
+from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.post.hyperparams import *
     # Language NGram Model
-import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.past.ngram as ngram
-from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.past.ngram import *
+import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.post.ngram as ngram
+from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.post.ngram import *
     # Normalisasi Lexicon
-import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.past.normalisasiLexicon as normLexicon
-from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.past.normalisasiLexicon import *
+import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.post.normalisasiLexicon as normLexicon
+from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.post.normalisasiLexicon import *
     # Word Error Rate
-import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.past.WER as wer
-from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.past.WER import *
+import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.post.WER as wer
+from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.post.WER import *
 
    
 __all__ = [

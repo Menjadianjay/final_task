@@ -1,8 +1,12 @@
-import codeStat.modelimports.modelFunction as func
-from codeStat.modelimports.modelFunction import *
+from typing import Dict, List, Tuple, Optional
+from collections import defaultdict
+import math
+# Normalisasi Lexicon
+import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.past.normalisasiLexicon as normLexicon
+from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.past.normalisasiLexicon import *
 
 class NGramModel:
-    """Trigram Language Model dengan Kneser-Ney smoothing."""
+    # trigram Language Model dengan Kneser-Ney smoothing.
 
     def __init__(self, n: int = 3, discount: float = 0.75):
         self.n        = n
@@ -18,7 +22,6 @@ class NGramModel:
         return ["<s>"] * (self.n - 1) + tokens + ["</s>"]
 
     def fit(self, korpus: List[str]) -> "NGramModel":
-        """Latih N-gram dari list kalimat."""
         ctx_words: Dict[tuple, set] = defaultdict(set)
         for kalimat in korpus:
             tokens = self._tokenize(kalimat)
@@ -34,7 +37,6 @@ class NGramModel:
         return self
 
     def log_prob(self, kata: str, context: tuple) -> float:
-        """log P(kata | context) dengan Kneser-Ney smoothing."""
         ngram   = context + (kata,)
         C_ng    = self.ngram_count.get(ngram, 0)
         C_ctx   = self.context_count.get(context, 0)
@@ -50,7 +52,6 @@ class NGramModel:
         return math.log(prob + 1e-300)
 
     def score_sequence(self, kata_list: List[str]) -> float:
-        """Total log-probability urutan kata."""
         tokens = ["<s>"] * (self.n - 1) + kata_list + ["</s>"]
         log_p  = 0.0
         for i in range(self.n - 1, len(tokens)):
@@ -59,7 +60,6 @@ class NGramModel:
         return log_p
 
     def rescore(self, kandidat: List[List[str]]) -> List[str]:
-        """Pilih urutan kata terbaik dari kandidat berdasarkan skor N-gram."""
         if not kandidat:
             return []
         return max(kandidat, key=self.score_sequence)

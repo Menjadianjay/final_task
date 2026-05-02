@@ -1,6 +1,6 @@
 import sys
 sys.path.insert(0, r"D:\doc\2026\FINAL_CODE\src") 
-from codeStat.modelimports.modelFunction import *
+from codeStat.modelimports.functionImporrLIB import *
 
 _SR         = 16000
 _N_MFCC     = 13

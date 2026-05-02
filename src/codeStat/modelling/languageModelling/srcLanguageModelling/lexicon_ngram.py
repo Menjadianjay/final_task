@@ -1,9 +1,15 @@
-import sys
-sys.path.insert(0, r"D:\doc\2026\FINAL_CODE\src") 
-from codeStat.modelimports.modelFunction import *
+from typing import Dict, List
+import re
+from collections import defaultdict
+import math
 
-#  pemetaan huruf ke fonem Bahasa Jawa
-#  Digraf harus diletakkan sebelum monograf agar diprioritaskan
+'''  
+    pemetaan huruf ke fonem Bahasa Jawa
+    Digraf harus diletakkan sebelum monograf agar diprioritaskan
+    Bagain ini perlu ditinjau lagi melihat neednya dari trigraf hingga seterusnya 
+    mengingat project ini use words that are unique and long.
+'''
+
 PETA_FONEM: Dict[str, List[str]] = {
     # Digraf khas Bahasa Jawa
     "ng": ["ng"],
@@ -48,9 +54,10 @@ def buat_lexicon(transkrip_list: List[str]) -> Dict[str, List[str]]:
                 lexicon[kata] = kata_ke_fonem(kata)
     return lexicon
 
-
-
-#Trigram dengan Kneser-Ney Smoothing 
+'''
+Tinjau perbeddaan dari model ngram yang ini dengan yang pada file GMM pada prefix
+ubah variabel agar lebih mudah dipahami. 
+'''
 
 class NGramModel:
     def __init__(self, n: int = 3, discount: float = 0.75):
@@ -100,6 +107,11 @@ class NGramModel:
             return math.log(prob + 1e-300)
 
         # Kneser-Ney: P_KN = max(C-d, 0)/C(ctx) + λ(ctx) × P_back
+        '''
+        Ubah syntax agar menjadi lebih mudah dipahami dan lebih sederhana.
+        use syntax that have the same structure as the mathematical formula
+        Jurnal base syntax
+        '''
         diversity = self._context_diversity.get(context, 0)
         lam       = (self.discount * diversity) / C_ctx
 
@@ -122,45 +134,3 @@ class NGramModel:
         if not kandidat:
             return []
         return max(kandidat, key=self.score_sequence)
-
-
-#  WER = (S + D + I) / N
-
-def compute_wer(referensi: List[str], hipotesis: List[str]) -> Dict:
-    R, H = len(referensi), len(hipotesis)
-
-    prev = list(range(H + 1))
-    for i in range(1, R + 1):
-        curr    = [i] + [0] * H
-        for j in range(1, H + 1):
-            if referensi[i - 1] == hipotesis[j - 1]:
-                curr[j] = prev[j - 1]
-            else:
-                curr[j] = 1 + min(prev[j - 1], prev[j], curr[j - 1])
-        prev = curr
-
-    dp = [[0] * (H + 1) for _ in range(R + 1)]
-    for i in range(R + 1): dp[i][0] = i
-    for j in range(H + 1): dp[0][j] = j
-    for i in range(1, R + 1):
-        for j in range(1, H + 1):
-            if referensi[i - 1] == hipotesis[j - 1]:
-                dp[i][j] = dp[i - 1][j - 1]
-            else:
-                dp[i][j] = 1 + min(dp[i - 1][j - 1], dp[i - 1][j], dp[i][j - 1])
-
-    S = D = I = 0
-    i, j = R, H
-    while i > 0 or j > 0:
-        if i > 0 and j > 0 and referensi[i - 1] == hipotesis[j - 1]:
-            i -= 1; j -= 1
-        elif i > 0 and j > 0 and dp[i][j] == dp[i - 1][j - 1] + 1:
-            S += 1; i -= 1; j -= 1
-        elif i > 0 and dp[i][j] == dp[i - 1][j] + 1:
-            D += 1; i -= 1
-        else:
-            I += 1; j -= 1
-
-    N   = R
-    wer = (S + D + I) / N if N > 0 else 0.0
-    return {"wer_persen": round(wer * 100, 2), "S": S, "D": D, "I": I, "N": N}

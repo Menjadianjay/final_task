@@ -1,7 +1,13 @@
-from codeStat.modelimports.modelFunction import *
-# simplest way to connect the import library to function file
-
-# Hyperparameter Tunning
+from typing import Dict, List, Tuple, Optional
+import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.post.ngram as ngram
+from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.post.ngram import *
+import numpy as np
+import pandas as pd
+import time
+import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.model.trainGMM as trainGMM
+from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.model.trainGMM import *
+import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.gmmpipeline as GMM_pipeline
+from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.gmmpipeline import *
 
 def hyperparameter_tuning(
     frame_per_kata : Dict[str, List[np.ndarray]],
@@ -12,7 +18,7 @@ def hyperparameter_tuning(
 ) -> pd.DataFrame:
     grid = [
         (K, tol, mi)
-        for K  in [4, 8, 16, 32]
+        for K  in [4, 8, 16, 32] 
         for tol in [1e-3, 1e-4]  #this toleration have to be studied further
         for mi in [50, 100, 200]
     ]
@@ -60,10 +66,10 @@ def hyperparameter_tuning(
     df_tuning.to_csv(f"{dir_save}/HasilHyperparameterTuning_GMM.csv", index=False)
 
     best = df_tuning.iloc[0]
-    print(f"\n  ✓ Parameter Terbaik:")
-    print(f"    K={int(best['K Komponen'])}, "
+    print(f"\nParameter Terbaik:")
+    print(f"K={int(best['K Komponen'])}, "
           f"tol={best['Toleransi']:.0e}, "
           f"iter={int(best['Maks Iterasi'])}, "
           f"WER={best['WER Corpus (%)']:.2f}%")
-    print(f"  Total waktu tuning: {(time.time()-t0_total)/60:.1f} menit")
+    print(f"Total waktu tuning: {(time.time()-t0_total)/60:.1f} menit")
     return df_tuning
