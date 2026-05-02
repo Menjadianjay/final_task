@@ -1,6 +1,6 @@
 from typing import Dict, List, Tuple, Optional
-import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.past.ngram as ngram
-from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.past.ngram import *
+import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.post.ngram as ngram
+from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.post.ngram import *
 import numpy as np
 import pandas as pd
 import time
@@ -66,10 +66,10 @@ def hyperparameter_tuning(
     df_tuning.to_csv(f"{dir_save}/HasilHyperparameterTuning_GMM.csv", index=False)
 
     best = df_tuning.iloc[0]
-    print(f"\n  ✓ Parameter Terbaik:")
-    print(f"    K={int(best['K Komponen'])}, "
+    print(f"\nParameter Terbaik:")
+    print(f"K={int(best['K Komponen'])}, "
           f"tol={best['Toleransi']:.0e}, "
           f"iter={int(best['Maks Iterasi'])}, "
           f"WER={best['WER Corpus (%)']:.2f}%")
-    print(f"  Total waktu tuning: {(time.time()-t0_total)/60:.1f} menit")
+    print(f"Total waktu tuning: {(time.time()-t0_total)/60:.1f} menit")
     return df_tuning

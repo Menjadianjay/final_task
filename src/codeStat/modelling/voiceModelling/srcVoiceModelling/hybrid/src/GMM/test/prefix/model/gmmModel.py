@@ -69,7 +69,7 @@ class GaussianMixtureModel:
         self.covariances_ = new_cov + self.reg_covar
 
     def fit(self, X: np.ndarray) -> "GaussianMixtureModel":
-        """Latih GMM dengan EM Algorithm."""
+        #Penempatan model Emission Step menuju GMM model 
         assert X.ndim == 2, "X harus shape (T, D)"
         self.n_components = min(self.n_components, X.shape[0])
         self._init_params(X)

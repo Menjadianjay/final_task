@@ -3,13 +3,13 @@ from typing import Dict, List
 import numpy as np
 import time
 from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.model.gmmModel import GaussianMixtureModel
-from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.past.normalisasiLexicon import normalisasi, kata_ke_fonem 
+from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.post.normalisasiLexicon import normalisasi, kata_ke_fonem 
 
 # BAGIAN 7 — FRAME PER KATA & LATIH GMM PER KATA
 
 def pecah_frame_per_kata(
     fitur    : np.ndarray,
-    kata_list: List[str],
+    kata_list: List[str],cmcz
 ) -> Dict[str, np.ndarray]:
     """Bagi frame MFCC secara proporsional ke setiap kata."""
     T, n = fitur.shape[0], len(kata_list)

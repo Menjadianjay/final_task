@@ -3,8 +3,13 @@ import re
 from collections import defaultdict
 import math
 
-#  pemetaan huruf ke fonem Bahasa Jawa
-#  Digraf harus diletakkan sebelum monograf agar diprioritaskan
+'''  
+    pemetaan huruf ke fonem Bahasa Jawa
+    Digraf harus diletakkan sebelum monograf agar diprioritaskan
+    Bagain ini perlu ditinjau lagi melihat neednya dari trigraf hingga seterusnya 
+    mengingat project ini use words that are unique and long.
+'''
+
 PETA_FONEM: Dict[str, List[str]] = {
     # Digraf khas Bahasa Jawa
     "ng": ["ng"],
@@ -49,9 +54,10 @@ def buat_lexicon(transkrip_list: List[str]) -> Dict[str, List[str]]:
                 lexicon[kata] = kata_ke_fonem(kata)
     return lexicon
 
-
-
-#Trigram dengan Kneser-Ney Smoothing 
+'''
+Tinjau perbeddaan dari model ngram yang ini dengan yang pada file GMM pada prefix
+ubah variabel agar lebih mudah dipahami. 
+'''
 
 class NGramModel:
     def __init__(self, n: int = 3, discount: float = 0.75):
@@ -101,6 +107,11 @@ class NGramModel:
             return math.log(prob + 1e-300)
 
         # Kneser-Ney: P_KN = max(C-d, 0)/C(ctx) + λ(ctx) × P_back
+        '''
+        Ubah syntax agar menjadi lebih mudah dipahami dan lebih sederhana.
+        use syntax that have the same structure as the mathematical formula
+        Jurnal base syntax
+        '''
         diversity = self._context_diversity.get(context, 0)
         lam       = (self.discount * diversity) / C_ctx
 
