@@ -52,39 +52,39 @@ from codeStat.preModelling.featureExtraction.src_featureExtraction.feature_extra
 import codeStat.preModelling.featureExtraction.src_featureExtraction.feature_extraction2 as feature_Extraction2
 from codeStat.preModelling.featureExtraction.src_featureExtraction.feature_extraction2 import *
 #GMM
-import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.gmm as GMM
-from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.gmm import *
+import codeStat.modelling.voiceModelling.srcVoiceModelling.plan2.GMM.GMM.test.gmm as GMM
+from codeStat.modelling.voiceModelling.srcVoiceModelling.plan2.GMM.GMM.test.gmm import *
 #GMM_PIPELINE
-import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.gmmpipeline as GMM_pipeline
-from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.gmmpipeline import *
+import codeStat.modelling.voiceModelling.srcVoiceModelling.plan2.GMM.GMM.test.gmmpipeline as GMM_pipeline
+from codeStat.modelling.voiceModelling.srcVoiceModelling.plan2.GMM.GMM.test.gmmpipeline import *
 #Lexicon_Ngram
 import codeStat.modelling.languageModelling.srcLanguageModelling.lexicon_ngram as lexicon_ngram
 from codeStat.modelling.languageModelling.srcLanguageModelling.lexicon_ngram import *
 
 # Test model 3
 # Pre
-import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.pre.ekstraksiMFCC as ekstraksiPRE
-from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.pre.ekstraksiMFCC import *
+import codeStat.modelling.voiceModelling.srcVoiceModelling.plan2.GMM.GMM.test.prefix.pre.ekstraksiMFCC as ekstraksiPRE
+from codeStat.modelling.voiceModelling.srcVoiceModelling.plan2.GMM.GMM.test.prefix.pre.ekstraksiMFCC import *
 # model
     # GMMMODEL
-import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.model.gmmModel as gmmModel
-from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.model.gmmModel import *
+import codeStat.modelling.voiceModelling.srcVoiceModelling.plan2.GMM.GMM.test.prefix.model.gmmModel as gmmModel
+from codeStat.modelling.voiceModelling.srcVoiceModelling.plan2.GMM.GMM.test.prefix.model.gmmModel import *
     # TRAINMODEL
-import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.model.trainGMM as trainGMM
-from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.model.trainGMM import *
+import codeStat.modelling.voiceModelling.srcVoiceModelling.plan2.GMM.GMM.test.prefix.model.trainGMM as trainGMM
+from codeStat.modelling.voiceModelling.srcVoiceModelling.plan2.GMM.GMM.test.prefix.model.trainGMM import *
 # post
     # hyperparameter Tunning
-import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.post.hyperparams as hyperParams
-from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.post.hyperparams import *
+import codeStat.modelling.voiceModelling.srcVoiceModelling.plan2.GMM.GMM.test.prefix.post.hyperparams as hyperParams
+from codeStat.modelling.voiceModelling.srcVoiceModelling.plan2.GMM.GMM.test.prefix.post.hyperparams import *
     # Language NGram Model
-import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.post.ngram as ngram
-from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.post.ngram import *
+import codeStat.modelling.voiceModelling.srcVoiceModelling.plan2.GMM.GMM.test.prefix.post.ngram as ngram
+from codeStat.modelling.voiceModelling.srcVoiceModelling.plan2.GMM.GMM.test.prefix.post.ngram import *
     # Normalisasi Lexicon
-import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.post.normalisasiLexicon as normLexicon
-from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.post.normalisasiLexicon import *
+import codeStat.modelling.voiceModelling.srcVoiceModelling.plan2.GMM.GMM.test.prefix.post.normalisasiLexicon as normLexicon
+from codeStat.modelling.voiceModelling.srcVoiceModelling.plan2.GMM.GMM.test.prefix.post.normalisasiLexicon import *
     # Word Error Rate
-import codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.post.WER as wer
-from codeStat.modelling.voiceModelling.srcVoiceModelling.hybrid.src.GMM.test.prefix.post.WER import *
+import codeStat.modelling.voiceModelling.srcVoiceModelling.plan2.GMM.GMM.test.prefix.post.WER as wer
+from codeStat.modelling.voiceModelling.srcVoiceModelling.plan2.GMM.GMM.test.prefix.post.WER import *
 
    
 __all__ = [
