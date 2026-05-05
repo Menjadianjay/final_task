@@ -1,0 +1,2 @@
+n_audio,wer_corpus,wer_mean,wer_median,wer_std,wer_min,wer_max,total_S,total_D,total_I,total_N
+1749,97.93,97.96,100.0,6.16,33.33,100.0,11892,0,0,12143

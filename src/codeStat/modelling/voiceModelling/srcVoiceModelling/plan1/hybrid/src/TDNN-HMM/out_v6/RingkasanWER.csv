@@ -1,0 +1,3 @@
+set,wer_corpus,wer_mean,wer_median,wer_std,total_S,total_D,total_I,total_N
+train,145.01,148.95,100.0,124.66,1469,8277,4403,9757
+val,149.83,153.99,100.0,138.6,395,1991,1192,2388
