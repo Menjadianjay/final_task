@@ -209,3 +209,11 @@ __marimo__/
 # Local data (do not track)
 data/
 Data/
+final_task-backup.bundle/
+
+#Generated acoustic-model artifacts
+src/codeStat/modelling/voiceModelling/kaldialignment/makeAligner/sampled/mfcc_cache.pkl
+src/codeStat/modelling/voiceModelling/kaldialignment/makeAligner/sampled/_combined_alignment.csv
+src/codeStat/modelling/voiceModelling/kaldialignment/makeAligner/sampled/alignment_tdnn_train.csv
+src/codeStat/modelling/voiceModelling/kaldialignment/make1Aligner/sampled_small/mfcc_cache.pkl
+src/codeStat/modelling/voiceModelling/kaldialignment/makeAligner/sampleddata/mfcc_cache.pkl
