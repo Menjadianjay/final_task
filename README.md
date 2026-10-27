@@ -14,7 +14,7 @@ Pipeline Automatic Speech Recognition (ASR) untuk Bahasa Jawa menggunakan Gaussi
 | Kolaborasi | Universitas Gadjah Mada × Google |
 | Format audio | WAV / FLAC |
 | Fitur akustik | MFCC 39-dimensi |
-| Bahasa | Python 3.x |
+| Bahasa | Python 3.11 |
 
 ---
 
